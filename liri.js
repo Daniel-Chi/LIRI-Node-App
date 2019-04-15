@@ -1,4 +1,5 @@
 //node and keys module setup
+let fs = require("fs");
 require("dotenv").config();
 let keys = require("./keys");
 let axios = require("axios");
@@ -20,8 +21,9 @@ for (i = 3; i < process.argv.length; i++) {
 };
 let b = arrb.join(" ");
 
-//bands in town api command
-if (a === "concert-this") {
+//declaring functions
+//bands in town api function
+let searchBands = function(b) {
     axios.get("https://rest.bandsintown.com/artists/" + b + "/events?app_id=codingbootcamp")
         .then(function (res) {
             for (i = 0; i < res.data.length; i++) {
@@ -37,8 +39,8 @@ if (a === "concert-this") {
             };
         });
 }
-//spotify api command
-else if (a === "spotify-this-song") {
+//spotify api function
+let searchSongs = function(b) {
     //set default
     if (b.length === 0) {
         b = "The Sign Ace of Base";
@@ -52,8 +54,8 @@ else if (a === "spotify-this-song") {
             "\nLink: " + track.external_urls.spotify);
     });
 }
-//omdb api command
-else if (a === "movie-this") {
+//omdb api function
+let searchMovies = function(b){
     //set default
     if (b.length === 0) {
         b = "Mr. Nobody";
@@ -61,33 +63,52 @@ else if (a === "movie-this") {
     axios.get("http://www.omdbapi.com/?apikey=trilogy&t=" + b)
         .then(function (res) {
             let movie = res.data
-            console.log("\nTitle: "+movie.Title+
-            "\nYear: "+movie.Year+
-            "\nIMDB: "+movie.imdbRating+
-            "\nRotten Tomatoes: "+movie.Ratings[1].Value+
-            "\nCountry: "+movie.Country+
-            "\nLanguage: "+movie.Language+
-            "\nActors: "+movie.Actors+
-            "\nPlot: "+movie.Plot);
+            console.log("\nTitle: " + movie.Title +
+                "\nYear: " + movie.Year +
+                "\nIMDB: " + movie.imdbRating +
+                "\nRotten Tomatoes: " + movie.Ratings[1].Value +
+                "\nCountry: " + movie.Country +
+                "\nLanguage: " + movie.Language +
+                "\nActors: " + movie.Actors +
+                "\nPlot: " + movie.Plot);
         });
 }
-//reads random.txt for command
+
+//bands in town api call
+if (a === "concert-this") {
+    searchBands(b);
+}
+//spotify api call
+else if (a === "spotify-this-song") {
+    searchSongs(b);
+}
+//omdb api call
+else if (a === "movie-this") {
+    searchMovies(b);
+}
+//reads random.txt for command arguments
 else if (a === "do-what-it-says") {
-    //bands in town api command
-    if (a === "concert-this") {
-
-    }
-    //spotify api command
-    else if (a === "spotify-this-song") {
-
-    }
-    //omdb api command
-    else if (a === "movie-this") {
-
-    }
-    else {
-        console.log("Error: invalid command given")
-    };
+    fs.readFile("./random.txt", "utf8", function (err, data) {
+        if (err) { return console.log("Error occurred: " + err); };
+        let arg = data.split(",");
+        let c = arg[0];
+        let d = arg[1];
+        //bands in town api command
+        if (c === "concert-this") {
+            searchBands(d);
+        }
+        //spotify api command
+        else if (c === "spotify-this-song") {
+            searchSongs(d);
+        }
+        //omdb api command
+        else if (c === "movie-this") {
+            searchMovies(d);
+        }
+        else {
+            console.log("Error: invalid command found")
+        };
+    });
 }
 else {
     console.log("Please give a valid command.\nconcert-this <...>\nspotify-this-song <...>\nmovie-this <...>\ndo-what-it-says")
