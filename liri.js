@@ -32,8 +32,7 @@ if (a === "concert-this") {
                         if (err) { return console.log("Error occurred: " + err); };
                         console.log("\n" + data[0].streetName + ", " + data[0].city + " " + data[0].stateCode + ", " + data[0].countryCode);
                     }).then(function () {
-                        console.log(name);
-                        console.log(date);
+                        console.log(name + "\n" + date);
                     });
             };
         });
@@ -47,10 +46,10 @@ else if (a === "spotify-this-song") {
     spotify.search({ type: "track", query: b }, function (err, data) {
         if (err) { return console.log("Error occurred: " + err); };
         let track = data.tracks.items[0]
-        console.log("\nTrack: " + track.name)
-        console.log("Album: " + track.album.name);
-        console.log("Artist: " + track.artists[0].name);
-        console.log("Link: " + track.external_urls.spotify);
+        console.log("\nTrack: " + track.name +
+            "\nAlbum: " + track.album.name +
+            "\nArtist: " + track.artists[0].name +
+            "\nLink: " + track.external_urls.spotify);
     });
 }
 //omdb api command
@@ -59,7 +58,18 @@ else if (a === "movie-this") {
     if (b.length === 0) {
         b = "Mr. Nobody";
     };
-    axios.get()
+    axios.get("http://www.omdbapi.com/?apikey=trilogy&t=" + b)
+        .then(function (res) {
+            let movie = res.data
+            console.log("\nTitle: "+movie.Title+
+            "\nYear: "+movie.Year+
+            "\nIMDB: "+movie.imdbRating+
+            "\nRotten Tomatoes: "+movie.Ratings[1].Value+
+            "\nCountry: "+movie.Country+
+            "\nLanguage: "+movie.Language+
+            "\nActors: "+movie.Actors+
+            "\nPlot: "+movie.Plot);
+        });
 }
 //reads random.txt for command
 else if (a === "do-what-it-says") {
