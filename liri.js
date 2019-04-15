@@ -20,10 +20,11 @@ for (i = 3; i < process.argv.length; i++) {
     arrb.push(process.argv[i]);
 };
 let b = arrb.join(" ");
+let log = a + ":" + b + ",";
 
 //declaring functions
 //bands in town api function
-let searchBands = function(b) {
+let searchBands = function (b) {
     axios.get("https://rest.bandsintown.com/artists/" + b + "/events?app_id=codingbootcamp")
         .then(function (res) {
             for (i = 0; i < res.data.length; i++) {
@@ -40,7 +41,7 @@ let searchBands = function(b) {
         });
 }
 //spotify api function
-let searchSongs = function(b) {
+let searchSongs = function (b) {
     //set default
     if (b.length === 0) {
         b = "The Sign Ace of Base";
@@ -55,7 +56,7 @@ let searchSongs = function(b) {
     });
 }
 //omdb api function
-let searchMovies = function(b){
+let searchMovies = function (b) {
     //set default
     if (b.length === 0) {
         b = "Mr. Nobody";
@@ -73,18 +74,25 @@ let searchMovies = function(b){
                 "\nPlot: " + movie.Plot);
         });
 }
+//log function
+let appendLog = function () {
+    fs.appendFile("log.txt", log, function () { });
+}
 
 //bands in town api call
 if (a === "concert-this") {
     searchBands(b);
+    appendLog();
 }
 //spotify api call
 else if (a === "spotify-this-song") {
     searchSongs(b);
+    appendLog();
 }
 //omdb api call
 else if (a === "movie-this") {
     searchMovies(b);
+    appendLog();
 }
 //reads random.txt for command arguments
 else if (a === "do-what-it-says") {
@@ -93,6 +101,8 @@ else if (a === "do-what-it-says") {
         let arg = data.split(",");
         let c = arg[0];
         let d = arg[1];
+        log = c + ":" + d + ",";
+        appendLog();
         //bands in town api command
         if (c === "concert-this") {
             searchBands(d);
